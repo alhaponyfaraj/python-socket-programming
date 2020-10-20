@@ -1,13 +1,5 @@
 from socket import *
 
-def string_counter(string):
-    fruit = string
-    count = 0
-    for char in fruit:
-        if char == 'a':
-            count += 1
-    print("The counted :" + str(count) + " times.")
-
 def server_program():
     # get the hostname
     host = '127.0.0.1'
@@ -24,14 +16,26 @@ def server_program():
     while True:
         # receive data stream. it won't accept data packet greater than 1024 bytes
         data = conn.recv(1024).decode()
+        counted_sting = string_counter(data)
         if not data:
             # if data is not received break
             break
         print("from connected user: " + str(data))
+
         data = input(' -> ')
         conn.send(data.encode())  # send data to the client
+        conn.send(counted_sting.encode())
 
     conn.close()  # close the connection
+
+
+def string_counter(string):
+    print('String-', string)
+    no_of_words = 1
+    for ch in string:
+        if (ch == ' ' or ch == '\t' or ch == '\n'):
+            no_of_words += 1
+    print('Total number of words in String', no_of_words)
 
 if __name__ == '__main__':
     server_program()
