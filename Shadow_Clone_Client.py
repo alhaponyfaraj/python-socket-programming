@@ -1,43 +1,50 @@
 from socket import *
 
+host = '127.0.0.1'  # as both code is running on same pc
+port = 50249  # socket server port number
+
+client_socket = socket()  # instantiate
+client_socket.connect((host, port))  # connect to the server
+
 # txt file contains the cli interface components
-cli = open("style.txt", "r")
-print(cli.read())
+#cli_style = open("style.txt", "r")
+print(open("style.txt", "r").read())
 
-run_loop = True
-while run_loop:
-    choice = input('''Type 1 or 2 to run a function: ---
-    1. Function A:
-    2. Function B:
-     Your Choice: ''')
 
-    if choice == 1:
-        print(" this is choice 1")
-    elif choice == 2:
-        print(" this is choice 2")
-    elif choice == 3:
-        print(" this is exit choice")
-    else:
-        print(" this is invalid option try again !")
-def shadow_clone():
-    host = '127.0.0.1' # as both code is running on same pc
-    port = 50249  # socket server port number
-
-    client_socket = socket()  # instantiate
-    client_socket.connect((host, port))  # connect to the server
-
+def shadow_clone(content):
     ''''''
-    message = input(" -> ")  # take input
+    choice_message = choice
 
-    while message.lower().strip() != 'bye':
-        client_socket.send(message.encode())  # send message
-        data = client_socket.recv(1024).decode()  # receive response
+    client_socket.send(choice_message.encode())  # send choice message
+    client_socket.send(content.encode())  # send choice message
+    data = client_socket.recv(1024).decode()  # receive response
+    print('Received from server: ' + str(data))  # show in terminal
 
-        print('Received from server: ' + str(data))  # show in terminal
+    return data
 
-        message = input(" -> ")  # again take input
 
-    #lient_socket.close()  # close the connection
+def main():
+    run_loop = True
+    while run_loop:
+        choice = input('''Type 1 or 2 to run a function: ---
+        1. Function A . 
+        2. Function B .
+        3. Exit .
+         Your Choice: ''')
+
+        if choice == "1":
+            string_to_send = shadow_clone(input("Type the string to send"))
+
+            print(" this is choice 1")
+        elif choice == "2":
+            print(" this is choice 2")
+        elif choice == "3":
+            print(" this is exit choice")
+            client_socket.close()  # close the connection
+            run_loop = False
+        else:
+            print(" this is invalid option! please try again !")
+
 
 if __name__ == '__main__':
-    shadow_clone()
+    main()
