@@ -4,9 +4,21 @@ from socket import *
 cli = open("style.txt", "r")
 print(cli.read())
 
-choice_1 = input("Type 1 to run function A: ")
-choice_2 = input("Type 2 to run function B: ")
+run_loop = True
+while run_loop:
+    choice = input('''Type 1 or 2 to run a function: ---
+    1. Function A:
+    2. Function B:
+     Your Choice: ''')
 
+    if choice == 1:
+        print(" this is choice 1")
+    elif choice == 2:
+        print(" this is choice 2")
+    elif choice == 3:
+        print(" this is exit choice")
+    else:
+        print(" this is invalid option try again !")
 def shadow_clone():
     host = '127.0.0.1' # as both code is running on same pc
     port = 50249  # socket server port number
