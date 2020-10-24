@@ -1,0 +1,18 @@
+#############################################################################
+###                                                                       ###
+###                                CN 5204                                ###
+###                     Advanced Network Programming                      ###
+###       Mini-Project 2: Socket Programming Experiment with Python       ###
+###                                                                       ###
+###                                                                       ###
+#############################################################################
+
+This program can do two main functions
+_______________________________________________
+
+Function A: counts the number of words and letters of a string input argument,
+then it returns the most appeared word and letter.
+_______________________________________________
+
+Function B; returns the graph of the mathematical
+function f(x)

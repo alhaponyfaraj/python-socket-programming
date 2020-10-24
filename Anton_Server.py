@@ -1,6 +1,8 @@
+from collections import defaultdict
 from socket import *
+import grafilio
 
-def server_program():
+def Anton_handshake():
     # get the hostname
     host = '127.0.0.1'
     port = 50249  # initiate port no above 1024
@@ -15,21 +17,22 @@ def server_program():
     print("Connection from: " + str(address))
     while True:
         # receive data stream. it won't accept data packet greater than 1024 bytes
-        data = conn.recv(1024).decode()
-        counted_sting = string_counter(data)
-        if not data:
+        client_data = conn.recv(1024).decode()
+        counted_string = string_counter_words(client_data)
+        word_counter_letters(str(client_data))
+        if not client_data and not counted_string and not word_counter_letters:
             # if data is not received break
             break
-        print("from connected user: " + str(data))
+        print("from connected user: " + str(word_counter_letters(client_data)))
 
-        data = input(' -> ')
-        conn.send(data.encode())  # send data to the client
-        conn.send(counted_sting.encode())
+        server_data = str(str(word_counter_letters(client_data)))
+        conn.send(server_data.encode())  # send data to the client
+
 
     conn.close()  # close the connection
 
 
-def string_counter(string):
+def string_counter_words(string):
     print('String-', string)
     no_of_words = 1
     for ch in string:
@@ -37,5 +40,14 @@ def string_counter(string):
             no_of_words += 1
     print('Total number of words in String', no_of_words)
 
+def word_counter_letters(word):
+    matches = defaultdict(int)  # makes the default value 0
+
+    for char in word:
+        matches[char] += 1
+
+        return max(matches.items(), key=lambda x: x[1])
+
+    word_counter_letters('helloworld')
 if __name__ == '__main__':
-    server_program()
+    Anton_handshake()
