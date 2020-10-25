@@ -11,7 +11,8 @@ client_socket.connect((host, port))  # connect to the server
 print(open("style.txt", "r").read())
 
 
-def shadow_clone(content):
+# content is the string to send, choice is the option to be send to the server
+def shadow_clone(content, choice):
     ''''''
     choice_message = choice
 
@@ -33,11 +34,16 @@ def main():
          Your Choice: ''')
 
         if choice == "1":
-            string_to_send = shadow_clone(input("Type the string to send"))
+            string_to_send = shadow_clone(input("Type the string to send: "), choice)
 
             print(" this is choice 1")
         elif choice == "2":
+            a = input("Type the value of a: ")
+            b = input("Type the value of b:")
+            print(a +','+ b)
+            string_to_send = shadow_clone(a +',' + b, choice)
             print(" this is choice 2")
+            print(string_to_send)
         elif choice == "3":
             print(" this is exit choice")
             client_socket.close()  # close the connection

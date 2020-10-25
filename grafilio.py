@@ -27,4 +27,4 @@ def draw_graph(graph_eq):
 
     plt.show()
 
-draw_graph(r_cos())
+draw_graph(r_cos(2, 10))
