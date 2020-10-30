@@ -1,53 +1,95 @@
-from collections import defaultdict
+
+from collections import defaultdict, Counter
 from socket import *
-import grafilio
+from grafilio import draw_graph, r_cos
+from _thread import *
+import os
 
-def Anton_handshake():
-    # get the hostname
-    host = '127.0.0.1'
-    port = 50249  # initiate port no above 1024
+ServerSocket = socket()
+host = '127.0.0.1'
+port = 1233
+ThreadCount = 0
+try:
+    ServerSocket.bind((host, port))
+except socket.error as e:
+    print(str(e))
 
-    server_socket = socket()  # get instance
-    # look closely. The bind() function takes tuple as argument
-    server_socket.bind((host, port))  # bind host address and port together
-
-    # configure how many client the server can listen simultaneously
-    server_socket.listen(2)
-    conn, address = server_socket.accept()  # accept new connection
-    print("Connection from: " + str(address))
-    while True:
-        # receive data stream. it won't accept data packet greater than 1024 bytes
-        client_data = conn.recv(1024).decode()
-        counted_string = string_counter_words(client_data)
-        word_counter_letters(str(client_data))
-        if not client_data and not counted_string and not word_counter_letters:
-            # if data is not received break
-            break
-        print("from connected user: " + str(word_counter_letters(client_data)))
-
-        server_data = str(str(word_counter_letters(client_data)))
-        conn.send(server_data.encode())  # send data to the client
+print('Waiting for a Connection..')
+ServerSocket.listen(5)
 
 
-    conn.close()  # close the connection
+def threaded_client(connection):
+    try:
+        while True:
+            # receive data stream. it won't accept data packet greater than 1024 bytes
+            client_data = connection.recv(1024)
+            choice = client_data.decode()[0]
+            print("hey")
+
+            # Run
+            if choice == "1":
+                client_data_string = client_data.decode()[1:]
+                print(choice, client_data_string)
+                server_data = str(word_letter_count(client_data_string))
+
+                connection.send(server_data.encode())  # send data to the client
+
+            if choice == "2":
+
+                c = client_data.decode('utf-8')
+                client_data_string = c[1:]
+                a = float((c[1]))
+                b = float(c[2])
+                draw_graph(r_cos(a, b))
+                result = open("temp.png", "rb").read(8128)
 
 
-def string_counter_words(string):
-    print('String-', string)
-    no_of_words = 1
-    for ch in string:
-        if (ch == ' ' or ch == '\t' or ch == '\n'):
-            no_of_words += 1
-    print('Total number of words in String', no_of_words)
+                #print(a , b)
+                #print(choice, client_data_string)
 
-def word_counter_letters(word):
-    matches = defaultdict(int)  # makes the default value 0
+                #server_data = str(word_letter_count(client_data_string))
+                connection.send(result)  # send data to the client
 
-    for char in word:
-        matches[char] += 1
+            if not client_data and not client_data_string:
+                # if data is not received break
+                break
+    except Exception as e:
+        print(str(e))
 
-        return max(matches.items(), key=lambda x: x[1])
 
-    word_counter_letters('helloworld')
-if __name__ == '__main__':
-    Anton_handshake()
+
+def word_letter_count(str):
+    word_counts = dict()
+    letter_counts = dict()
+    words = str.split()
+
+    for word in words:
+        if word in word_counts:
+            word_counts[word] += 1
+        else:
+            word_counts[word] = 1
+        letters = word.split()
+        for letter in word:
+            if letter in letter_counts:
+                letter_counts[letter] += 1
+            else:
+                letter_counts[letter] = 1
+
+    counter = Counter(word_counts)
+
+    counter2 = Counter(letter_counts)
+    most_occur_word = counter.most_common(1)
+    most_occur_letter = counter2.most_common(1)
+    return most_occur_letter, most_occur_word
+
+def plot_graph(a, b):
+    draw_graph(r_cos(a, b))
+
+while True:
+    Client, address = ServerSocket.accept()
+    print('Connected to: ' + address[0] + ':' + str(address[1]))
+    start_new_thread(threaded_client, (Client, ))
+    ThreadCount += 1
+    print('Thread Number: ' + str(ThreadCount))
+
+ServerSocket.close()
