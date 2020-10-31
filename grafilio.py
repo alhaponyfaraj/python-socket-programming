@@ -33,5 +33,4 @@ def draw_graph(graph_eq):
     except Exception as e:
         print(str(e))
     plt.savefig('temp.png', dpi=100)
-    plt.show()
-    print("I am here young man")
+    #plt.show()

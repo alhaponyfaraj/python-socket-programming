@@ -1,9 +1,9 @@
-import socket, sys
+import sys
+from socket import *
 from datetime import datetime
-ClientSocket = socket.socket()
-import matplotlib.pyplot as plt
+ClientSocket = socket()
 host = '127.0.0.1'
-port = 1233
+port = 50249
 
 print('Waiting for connection')
 
@@ -29,29 +29,29 @@ def shadow_clone(content, choice):
 
         if choice == "1":
             timer = datetime.now()
-            time = timer.strftime("%Y-%m-%d_%H:%M:%S")
-            generated_file_name = (str(time) + "-Function_A.txt")
+            time = timer.strftime("%Y-%m-%d_%H-%M-%S")
+            generated_file_name = (str(time) + "_Function_A")
             print(generated_file_name)
-            data = ClientSocket.recv(1024).decode()  # receive response
+            data = ClientSocket.recv(1024).decode('utf-8')  # receive response
+            filename = "./txt_files/file_" + generated_file_name + ".txt"
+            file = open(filename, 'w')
+            file_data = str(data)
+            file.write(file_data)
             print('Received from server: ' + str(data))  # show in terminal
-            ClientSocket.close()
+
         elif choice == "2":
             timer = datetime.now()
-            time = timer.strftime("%Y-%m-%d_%H:%M:%S")
-            generated_file_name = (str(time) + "-Function_B")
-            data = ClientSocket.recv(8128)
-            filename = generated_file_name + ".png"
+            time = timer.strftime("%Y-%m-%d_%H-%M-%S")
+            generated_file_name = (str(time) + "_Function_B")
+            data = ClientSocket.recv(64024)
+            filename = "./graphs/graph_" + generated_file_name + ".png"
             file = open(filename, 'wb')
             file_data = data
             file.write(file_data)
             file.close()
-            print("File has been received successfully.")
+            print("File received successfully.")
 
-            #data = ClientSocket.recv(1024).decode()  # receive response
-            #print('Received from server: ' + str(data))  # show in terminal
-            #plot_data = data
-            #plt.show(plot_data)
-        #ClientSocket.close()  # close the connection
+        ClientSocket.close()  # close the connection
     except Exception as e:
         Error_msg = '''There were an error ! Please Check if you can reach the server
         Check the following for more details: \n'''
@@ -59,8 +59,8 @@ def shadow_clone(content, choice):
         exit_option = input('''\nPress Enter to continue ...
         if you want exit type 1 and press enter: ''')
         if exit_option == "1":
+            ClientSocket.close()
             sys.exit()
-    #ClientSocket.close()
     return data
 
 
@@ -81,11 +81,12 @@ def main():
          Your Choice: ''')
 
         if choice == "1":
-            string_to_send = shadow_clone(input("Type the string to send: "), choice)
+            shadow_clone(input("Type the string to send: "), choice)
 
             print('''this is choice 1
 
             ################################################################''')
+            ClientSocket.close()
         elif choice == "2":
             # send the value of a and b
             a = input("Type the value of a:")
@@ -110,11 +111,12 @@ def main():
 
 
 
-            string_to_send = shadow_clone(a + b, choice)
+            shadow_clone(a + b, choice)
             print('''this is choice 2
 
             ################################################################''')
-            print(string_to_send)
+            ClientSocket.close()
+
         elif choice == "3":
             print('''this is choice 3 Exiting !!!
 
@@ -127,3 +129,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
